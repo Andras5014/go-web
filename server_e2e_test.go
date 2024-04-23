@@ -16,13 +16,13 @@ func TestServer_e2e(t *testing.T) {
 		fmt.Println("GET /user handler2")
 	})
 
-	e.GET("/user/:name", func(ctx *Context) {
-		name, ok := ctx.PathValue("name")
+	e.GET("/user/:id", func(ctx *Context) {
+		id, ok := ctx.PathValue("id")
 		if !ok {
 			ctx.Resp.WriteHeader(400)
 			return
 		}
-		_ = ctx.JSON(200, map[string]string{"name": name})
+		_ = ctx.JSON(200, map[string]string{"id": id})
 	})
 
 	err := e.Start(":8080")
