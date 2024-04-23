@@ -1,4 +1,4 @@
-module go-web
+module go get github.com/Andras5014/go-web
 
 go 1.21
 
