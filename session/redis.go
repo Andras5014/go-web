@@ -53,6 +53,7 @@ func (d *DefaultSerializer) Decode(data []byte) (Session, error) {
 	return res.Interface().(Session), nil
 }
 
+// NewRedisStore 创建一个新的 Redis 存储
 func NewRedisStore(cmd redis.Cmdable, expiration time.Duration, opts ...StoreOption) *RedisStore {
 	res := &RedisStore{
 		exp:            expiration,
@@ -68,6 +69,7 @@ func NewRedisStore(cmd redis.Cmdable, expiration time.Duration, opts ...StoreOpt
 	return res
 }
 
+// Get 从 Redis 获取会话数据
 func (r *RedisStore) Get(ctx context.Context, id string) (Session, error) {
 	val, err := r.cmd.Get(ctx, id).Bytes()
 	if err != nil {
@@ -76,6 +78,7 @@ func (r *RedisStore) Get(ctx context.Context, id string) (Session, error) {
 	return r.serializer.Decode(val)
 }
 
+// Set 将会话数据存储到 Redis
 func (r *RedisStore) Set(ctx context.Context, sess Session) error {
 	data, err := r.serializer.Encode(sess)
 	if err != nil {
@@ -84,6 +87,7 @@ func (r *RedisStore) Set(ctx context.Context, sess Session) error {
 	return r.cmd.Set(ctx, sess.ID(), data, r.exp).Err()
 }
 
+// Generate 创建一个新的会话并存储到 Redis
 func (r *RedisStore) Generate(ctx context.Context, id string) (Session, error) {
 	// 使用指定的会话生成器创建新的会话实例
 	sess := r.sessionBuilder(r, id)
@@ -94,6 +98,7 @@ func (r *RedisStore) Generate(ctx context.Context, id string) (Session, error) {
 	return sess, nil
 }
 
+// Remove 从 Redis 中删除会话数据
 func (r *RedisStore) Remove(ctx context.Context, id string) error {
 	return r.cmd.Del(ctx, id).Err()
 }
